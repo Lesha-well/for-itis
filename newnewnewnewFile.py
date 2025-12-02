@@ -1,1 +1,1 @@
-print(''.join(list(map(chr, map(ord, 'hello world')))))
+print('\n\n\nHello\n\n\nWorld\n\n\n!!!')
