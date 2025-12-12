@@ -1,0 +1,25 @@
+CHIP Memory20K {
+    IN in[16], load, address[15];
+    OUT out[16];
+
+    PARTS:
+    // Адреса:
+    // 0000000000000000 - 0 011 111111111111 - RAM16K
+    // 0100000000000000 - 0 101 111111111111 - Screen
+    //                    0 110 000000000000 - Keyboard
+    // 0111000000000000 - 0 111 111111111111 - RAM4K
+
+
+    DMux(in=load, sel=address[14], a=loadRAM16K, b=outScreenKeyboardRAM4);
+    DMux(in=outScreenKeyboardRAM4, sel=address[13], a=loadScreen, b=outScreenKeyboard);
+    DMux(in=outScreenKeyboard, sel=address[12], a=loadKeyboard, b=loadRAM4k);
+
+    RAM16K(in=in, load=loadRAM16K, address=address[0..13], out=outRAM16K);
+    Screen(in=in, load=loadScreen, address=address[0..12], out=outScreen);
+    Keyboard(out=outKeyboard);
+    RAM4K(in=in, load=loadRAM4k, address=address[0..11], out=outRAM4K);
+
+    Mux16(a=outKeyboard, b=outRAM4K, sel=address[12], out=outKeyboardRAM4);
+    Mux16(a=outScreen, b=outKeyboardRAM4, sel=address[13], out=outScreenOrKeyboardRAM4);
+    Mux16(a=outRAM16K, b=outScreenOrKeyboardRAM4, sel=address[14], out=out);
+}
